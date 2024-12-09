@@ -1,0 +1,1 @@
+export {default as bac} from './bg.mp4'
