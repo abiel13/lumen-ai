@@ -19,13 +19,12 @@ export async function createUser(clerkId: string) {
 export async function getUserByClerkId(clerkId: string) {
   connectToDB();
   try {
-    const user = await User.findOne({ clerkId })
+    const user = await User.findOne({ clerkId });
 
     return JSON.parse(JSON.stringify(user));
   } catch (error: any) {
-    console.log(error)
+    console.log(error);
   }
-  
 }
 
 // Add a history record to a user
@@ -38,7 +37,7 @@ export async function addHistoryToUser(clerkId: string, historyId: string) {
     }
     user.history.push(historyId);
     await user.save();
-    return user;
+    return JSON.parse(JSON.stringify(user));
   } catch (error: any) {
     throw new Error(`Error adding history: ${error.message}`);
   }

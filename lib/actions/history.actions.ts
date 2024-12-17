@@ -1,4 +1,4 @@
-'use server'
+"use server";
 import History from "../models/history.models";
 
 interface HistoryPayload {
@@ -7,20 +7,25 @@ interface HistoryPayload {
 }
 
 // Create a new history record
-export async function createHistory({ conversationId, messages = [] }: HistoryPayload): Promise<typeof History> {
+export async function createHistory({
+  conversationId,
+  messages = [],
+}: HistoryPayload): Promise<typeof History> {
   try {
     const history = new History({ conversationId, messages });
     await history.save();
-    return history;
+    return JSON.parse(JSON.stringify(history));
   } catch (error: any) {
     throw new Error(`Error creating history: ${error.message}`);
   }
 }
 
 // Get all history records
-export async function getHistories(): Promise<typeof History[]> {
+export async function getHistories(): Promise<(typeof History)[]> {
   try {
-    const histories = await History.find().sort({ createdAt: -1 }).populate("messages");
+    const histories = await History.find()
+      .sort({ createdAt: -1 })
+      .populate("messages");
     return histories;
   } catch (error: any) {
     throw new Error(`Error fetching histories: ${error.message}`);
@@ -28,7 +33,9 @@ export async function getHistories(): Promise<typeof History[]> {
 }
 
 // Get a history record by ID
-export async function getHistoryById(historyId: string): Promise<typeof History | null> {
+export async function getHistoryById(
+  historyId: string
+): Promise<typeof History | null> {
   try {
     const history = await History.findById(historyId).populate("messages");
     if (!history) {
@@ -41,7 +48,10 @@ export async function getHistoryById(historyId: string): Promise<typeof History 
 }
 
 // Update a history record
-export async function updateHistory(historyId: string, updateData: Partial<HistoryPayload>): Promise<typeof History | null> {
+export async function updateHistory(
+  historyId: string,
+  updateData: Partial<HistoryPayload>
+): Promise<typeof History | null> {
   try {
     const history = await History.findByIdAndUpdate(historyId, updateData, {
       new: true,
@@ -55,8 +65,28 @@ export async function updateHistory(historyId: string, updateData: Partial<Histo
   }
 }
 
+export async function addMessageToHistory(conversationId:string, messageId:string) {
+  try {
+    const history = await History.findOneAndUpdate(
+      { conversationId },
+      {
+        $addToSet: { messages: messageId },
+      },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
+    return JSON.parse(JSON.stringify(history));
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 // Delete a history record
-export async function deleteHistory(historyId: string): Promise<typeof History | null> {
+export async function deleteHistory(
+  historyId: string
+): Promise<typeof History | null> {
   try {
     const history = await History.findByIdAndDelete(historyId);
     if (!history) {

@@ -13,7 +13,7 @@ export async function createMessage({ type, content, path }: MessagePayload): Pr
   try {
     const message = new Messages({ type, content, path });
     await message.save();
-    return message;
+    return JSON.parse(JSON.stringify(message));
   } catch (error: any) {
     throw new Error(`Error creating message: ${error.message}`);
   }

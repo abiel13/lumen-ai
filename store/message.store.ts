@@ -8,6 +8,7 @@ interface message {
 interface messageStoreI {
   messages: message[];
   addmessages: (message: message) => void;
+  clearMsg:() => void;
 }
 
 export const useMsgStore = create<messageStoreI>((set) => ({
@@ -18,4 +19,10 @@ export const useMsgStore = create<messageStoreI>((set) => ({
       messages: [...state.messages, message],
     }));
   },
+  clearMsg: () => {
+    set((state) => ({
+      ...state,
+      messages: [],
+    }));
+  }
 }));

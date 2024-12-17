@@ -10,7 +10,7 @@ const ChatPage = async () => {
   const user = await currentUser();
 
   if (!user) {
-    redirect("/sign-in");
+    return null;
   }
 
   const dbuser = await getUserByClerkId(user!.id);
@@ -23,7 +23,7 @@ const ChatPage = async () => {
     <div className="px-8 overflow-y-hidden relative  h-screen">
       <Navbar />
       <MessageBox />
-      <TextPromptContainer />
+      <TextPromptContainer userid={user!.id} />
     </div>
   );
 };

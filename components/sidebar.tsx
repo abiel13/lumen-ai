@@ -1,13 +1,24 @@
+"use client";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 
 import Library from "./library";
 import { SignOutButton } from "@clerk/nextjs";
 import { LogOut } from "lucide-react";
+import useUpdateParams from "@/lib/hooks/updateSearchParams";
+import { useMsgStore } from "@/store/message.store";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function Sidebar({ className }: SidebarProps) {
+  const updateParams = useUpdateParams();
+  const { clearMsg } = useMsgStore();
+
+  const handleNewChat = () => {
+    updateParams("chat", "");
+    clearMsg();
+  };
+
   return (
     <div
       className={cn(
@@ -18,10 +29,10 @@ export function Sidebar({ className }: SidebarProps) {
       <div className="space-y-4 py-4 flex-1">
         <div className="px-3 py-2">
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            Discover
+            Lumen:ai
           </h2>
           <div className="space-y-1">
-            <Button variant="ghost" className="w-full justify-start">
+            <Button onClick={handleNewChat} variant="ghost" className="w-full justify-start">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
