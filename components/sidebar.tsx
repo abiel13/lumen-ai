@@ -8,9 +8,11 @@ import { LogOut } from "lucide-react";
 import useUpdateParams from "@/lib/hooks/updateSearchParams";
 import { useMsgStore } from "@/store/message.store";
 
-interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
+  user:any
+}
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className, user }: SidebarProps) {
   const updateParams = useUpdateParams();
   const { clearMsg } = useMsgStore();
 
@@ -52,7 +54,7 @@ export function Sidebar({ className }: SidebarProps) {
             </Button>
           </div>
         </div>
-        <Library />
+        <Library user={user} />
       </div>
       <div className="px-4 my-auto flex-1 flex-grow-0">
         <SignOutButton>

@@ -14,6 +14,7 @@ import {
 import { addHistoryToUser } from "@/lib/actions/user.action";
 import { createMessage } from "@/lib/actions/message.actions";
 import { toast } from "sonner";
+import { usePathname } from "next/navigation";
 
 const TextPromptContainer = ({ userid }: { userid: string }) => {
   const [text, setText] = useState("");
@@ -21,6 +22,8 @@ const TextPromptContainer = ({ userid }: { userid: string }) => {
   const { addmessages } = useMsgStore();
   const updateParams = useUpdateParams();
   const { hasParam, getParamValue } = useGetParam();
+  const pathname = usePathname()
+
 
   async function createuserhistory() {
     const conversationid = genuid();
@@ -31,7 +34,7 @@ const TextPromptContainer = ({ userid }: { userid: string }) => {
         conversationId: conversationid,
         messages: [],
       });
-      const adduserhistory = await addHistoryToUser(userid, history._id);
+      const adduserhistory = await addHistoryToUser(userid, history._id,pathname);
     } catch (error) {
       console.log(error);
     }
