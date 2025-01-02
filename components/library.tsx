@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 
 const History = ({ user }: { user: any }) => {
-  console.log(user.history);
+
   return (
     <div className="px-3 py-2 border-r-1 border-r-black flex-1 flex-shrink-0 h-full ">
       <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
@@ -11,9 +11,9 @@ const History = ({ user }: { user: any }) => {
       </h2>
       <ScrollArea>
         {user?.history?.length > 0 ? (
-          <div>
+          <div className="px-4 py-3 gap-4 flex flex-col">
             {user.history.map((history: any, index: number) => (
-              <div key={index}>{history?.messages[0]?.content}</div>
+              <div className="text-lg font-sans font-medium bg-gray-200 w-full rounded-md px-4 py-2" key={index}>{history?.messages[0]?.content.substring(0,36)}</div>
             ))}
           </div>
         ) : (

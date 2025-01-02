@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { connectToDB } from "../database/connection.db";
 import User from "../models/user.models";
 
@@ -29,7 +28,10 @@ export async function getUserByClerkId(clerkId: string) {
 }
 
 // Add a history record to a user
-export async function addHistoryToUser(clerkId: string, historyId: string, pathname:string) {
+export async function addHistoryToUser(
+  clerkId: string,
+  historyId: string,
+) {
   connectToDB();
   try {
     const user = await User.findOne({ clerkId });
@@ -38,32 +40,32 @@ export async function addHistoryToUser(clerkId: string, historyId: string, pathn
     }
     user.history.push(historyId);
     await user.save();
-
-    revalidatePath(pathname)
+  
     return JSON.parse(JSON.stringify(user));
   } catch (error: any) {
     throw new Error(`Error adding history: ${error.message}`);
   }
 }
 
-export async function getUserHistory (clerkId:string) { 
+export async function getUserHistory(clerkId: string) {
   connectToDB();
 
   try {
     const user = await User.findOne({ clerkId })
-    .populate({
-      path: "history",
-      populate: {
-        path: "messages", // Populate the messages within the history
-      },
-    })
-    .exec();
+      .populate({
+        path: "history",
+        options: { sort: { createdAt: -1 } },
+        populate: {
+          path: "messages", // Populate the messages within the history
+        },
+      })
+      .exec();
     if (!user) {
       throw new Error("User not found");
     }
-    return JSON.parse(JSON.stringify(user))
+    return JSON.parse(JSON.stringify(user));
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
 

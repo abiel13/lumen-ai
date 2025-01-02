@@ -1,4 +1,5 @@
 "use server";
+import { revalidatePath } from "next/cache";
 import History from "../models/history.models";
 
 interface HistoryPayload {
@@ -65,7 +66,7 @@ export async function updateHistory(
   }
 }
 
-export async function addMessageToHistory(conversationId:string, messageId:string) {
+export async function addMessageToHistory(conversationId:string, messageId:string, ) {
   try {
     const history = await History.findOneAndUpdate(
       { conversationId },
@@ -77,6 +78,7 @@ export async function addMessageToHistory(conversationId:string, messageId:strin
         upsert: true,
       }
     );
+
     return JSON.parse(JSON.stringify(history));
   } catch (error) {
     console.log(error);

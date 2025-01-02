@@ -22,8 +22,7 @@ const TextPromptContainer = ({ userid }: { userid: string }) => {
   const { addmessages } = useMsgStore();
   const updateParams = useUpdateParams();
   const { hasParam, getParamValue } = useGetParam();
-  const pathname = usePathname()
-
+  const pathname = usePathname();
 
   async function createuserhistory() {
     const conversationid = genuid();
@@ -34,7 +33,7 @@ const TextPromptContainer = ({ userid }: { userid: string }) => {
         conversationId: conversationid,
         messages: [],
       });
-      const adduserhistory = await addHistoryToUser(userid, history._id,pathname);
+      const adduserhistory = await addHistoryToUser(userid, history._id);
     } catch (error) {
       console.log(error);
     }
@@ -65,7 +64,7 @@ const TextPromptContainer = ({ userid }: { userid: string }) => {
         content: text,
       });
       if (message) {
-        const added = await addMessageToHistory(conversationid, message._id);
+        await addMessageToHistory(conversationid, message._id);
       }
     } catch (error) {
       toast("an error occured while sending message");
@@ -82,7 +81,10 @@ const TextPromptContainer = ({ userid }: { userid: string }) => {
         });
 
         if (message) {
-          const added = await addMessageToHistory(conversationid, message._id);
+         await addMessageToHistory(
+            conversationid,
+            message._id
+          );
         }
         addmessages({
           text: res,
@@ -107,10 +109,11 @@ const TextPromptContainer = ({ userid }: { userid: string }) => {
           placeholder="Write a prompt .."
         />
         <div className="w-14 h-14 rounded-full flex items-center justify-center bg-slate-400">
-          {
-            loading ? <div></div> :   <Plane onClick={messagePrompt} color="white" />
-          }
-       
+          {loading ? (
+            <div></div>
+          ) : (
+            <Plane onClick={messagePrompt} color="white" />
+          )}
         </div>
       </div>
 
