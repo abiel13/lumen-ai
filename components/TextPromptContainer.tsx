@@ -69,8 +69,8 @@ const TextPromptContainer = ({ userid }: { userid: string }) => {
       setLoading(true);
 
       addmessages({
-        text,
-        type: "sent",
+        content:text,
+        path: "sent",
       });
 
       // Create the sent message in the database
@@ -108,8 +108,8 @@ const TextPromptContainer = ({ userid }: { userid: string }) => {
 
         // Add the AI's response to UI
         addmessages({
-          text: responseText,
-          type: "recieved",
+          content: responseText,
+          path: "recieved",
         });
       }
     } catch (error) {

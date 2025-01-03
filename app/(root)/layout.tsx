@@ -13,7 +13,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
       <main className="flex-1 bg-[#fafafa] flex flex-row relative">
         <Sidebar user={userdata} />
 
-        <section className="flex-1">{children}</section>
+        <main className="flex-1">{children}</main>
       </main>
     </div>
   );

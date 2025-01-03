@@ -1,14 +1,15 @@
 import { create } from "zustand";
 
 interface message {
-  text: string;
-  type: "recieved" | "sent";
+  content: string;
+  path: "recieved" | "sent";
 }
 
 interface messageStoreI {
   messages: message[];
   addmessages: (message: message) => void;
-  clearMsg:() => void;
+  clearMsg: () => void;
+  setMsg: (messages: message[]) => void;
 }
 
 export const useMsgStore = create<messageStoreI>((set) => ({
@@ -24,5 +25,11 @@ export const useMsgStore = create<messageStoreI>((set) => ({
       ...state,
       messages: [],
     }));
-  }
+  },
+  setMsg: (messages) => {
+    set((state) => ({
+      ...state,
+      messages: messages,
+    }));
+  },
 }));

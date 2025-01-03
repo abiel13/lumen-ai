@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
+import Link from "next/link";
 
 const History = ({ user }: { user: any }) => {
 
@@ -13,7 +14,7 @@ const History = ({ user }: { user: any }) => {
         {user?.history?.length > 0 ? (
           <div className="px-4 py-3 gap-4 flex flex-col">
             {user.history.map((history: any, index: number) => (
-              <div className="text-lg font-sans font-medium bg-gray-200 w-full rounded-md px-4 py-2" key={index}>{history?.messages[0]?.content.substring(0,36)}</div>
+              <Link href={`?chat=${history.conversationId}`} className="text-lg font-sans font-medium bg-gray-200 w-full rounded-md px-4 py-2" key={index}>{history?.messages[0]?.content.substring(0,36)}</Link>
             ))}
           </div>
         ) : (

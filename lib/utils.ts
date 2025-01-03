@@ -11,3 +11,10 @@ export function genuid() {
 }
 
 
+export const formatTextRes = (text:string) => {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, "<strong className='my-8'>$1</strong>") // Bold (**text**)
+    .replace(/\*(.*?)\*/g, "<em className='my-8'>$1</em>") // Italics (*text*)
+    .replace(/\n\n/g, "</p><p>") // New paragraph for double newlines
+    .replace(/\n/g, "<br>"); // Line break for single newlines
+};

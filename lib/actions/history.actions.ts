@@ -34,14 +34,16 @@ export async function getHistories(): Promise<(typeof History)[]> {
 
 // Get a history record by ID
 export async function getHistoryById(
-  historyId: string
+  id: string
 ): Promise<typeof History | null> {
   try {
-    const history = await History.findById(historyId).populate("messages");
+    const history = await History.findOne({
+      conversationId: id,
+    }).populate("messages");
     if (!history) {
       throw new Error("History not found");
     }
-    return history;
+    return JSON.parse(JSON.stringify(history));
   } catch (error: any) {
     throw new Error(`Error fetching history: ${error.message}`);
   }
@@ -65,7 +67,10 @@ export async function updateHistory(
   }
 }
 
-export async function addMessageToHistory(conversationId:string, messageId:string, ) {
+export async function addMessageToHistory(
+  conversationId: string,
+  messageId: string
+) {
   try {
     const history = await History.findOneAndUpdate(
       { conversationId },
