@@ -1,5 +1,4 @@
 "use server";
-import { revalidatePath } from "next/cache";
 import History from "../models/history.models";
 
 interface HistoryPayload {

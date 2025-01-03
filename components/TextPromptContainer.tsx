@@ -14,91 +14,114 @@ import {
 import { addHistoryToUser } from "@/lib/actions/user.action";
 import { createMessage } from "@/lib/actions/message.actions";
 import { toast } from "sonner";
-import { usePathname } from "next/navigation";
+import { revalidateHome } from "@/lib/actions/actions";
 
 const TextPromptContainer = ({ userid }: { userid: string }) => {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const { addmessages } = useMsgStore();
   const updateParams = useUpdateParams();
-  const { hasParam, getParamValue } = useGetParam();
-  const pathname = usePathname();
+  const { getParamValue } = useGetParam();
 
   async function createuserhistory() {
-    const conversationid = genuid();
-    updateParams("chat", conversationid);
+    const conversationId = genuid();
 
     try {
+      await updateParams("chat", conversationId);
       const history: any = await createHistory({
-        conversationId: conversationid,
+        conversationId,
         messages: [],
       });
-      const adduserhistory = await addHistoryToUser(userid, history._id);
-    } catch (error) {
-      console.log(error);
+      await addHistoryToUser(userid, history._id);
+      return conversationId;
+    } catch (error: any) {
+      console.log("Error creating user history:", error.message);
+      throw new Error("Failed to create user history");
     }
   }
 
   async function messagePrompt() {
-    // create history and update url search params;
     if (!text.length) {
-      return;
+      return; // Ensure there's text to process
     }
 
-    if (!hasParam("chat")) {
-      await createuserhistory();
-    }
+    let conversationId = getParamValue("chat");
 
-    const conversationid = getParamValue("chat")!;
+    if (!conversationId) {
+      try {
+        // Create user history if no conversation ID exists
+        conversationId = await createuserhistory();
+
+        if (!conversationId) {
+          throw new Error("Failed to create or fetch conversation ID");
+        }
+      } catch (error) {
+        console.error(
+          "Error in messagePrompt while creating conversation ID:",
+          error
+        );
+        toast("An error occurred while creating user history");
+        return;
+      }
+    }
 
     try {
       setLoading(true);
+
       addmessages({
-        text: text,
+        text,
         type: "sent",
       });
 
-      const message: any = await createMessage({
+      // Create the sent message in the database
+      const sentMessage: any = await createMessage({
         type: "text",
         path: "sent",
         content: text,
       });
-      if (message) {
-        await addMessageToHistory(conversationid, message._id);
+
+      if (sentMessage) {
+        await addMessageToHistory(conversationId, sentMessage._id);
       }
     } catch (error) {
-      toast("an error occured while sending message");
+      console.error("Error while sending the message:", error);
+      toast("An error occurred while sending the message");
+      return;
+    }
+    finally{
+      setLoading(false)
     }
 
     try {
-      const res = await getpromptRes(text);
-
-      if (res) {
-        const message: any = await createMessage({
+      // Fetch response for the user's message
+      const responseText = await getpromptRes(text);
+      if (responseText) {
+        const receivedMessage: any = await createMessage({
           type: "text",
           path: "recieved",
-          content: res!,
+          content: responseText,
         });
 
-        if (message) {
-         await addMessageToHistory(
-            conversationid,
-            message._id
-          );
+        if (receivedMessage) {
+          await addMessageToHistory(conversationId, receivedMessage._id);
         }
+
+        // Add the AI's response to UI
         addmessages({
-          text: res,
+          text: responseText,
           type: "recieved",
         });
       }
     } catch (error) {
-      toast("an error occured while generating response");
+      console.error("Error generating response:", error);
+      toast("An error occurred while generating a response");
     } finally {
       setText("");
-      setLoading(false);
+      setLoading(false); // Reset loading state
+      await revalidateHome(); // Update the home page data
     }
   }
-
+  
   return (
     <div className="w-[55%] mx-auto  flex flex-col gap-4 items-center justify-center py-3 bg-[#fafafa]  shadow-md rounded-lg px-2">
       <div className="flex-row w-full items-center flex gap-4">
