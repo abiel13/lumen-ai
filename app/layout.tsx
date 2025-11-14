@@ -7,8 +7,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "EscraComm",
-  description: "",
+  title: "Lumen AI - Intelligent AI Assistant",
+  description: "Experience the future of AI conversation. Chat with our advanced AI assistant powered by Google Gemini.",
 };
 
 export default function RootLayout({

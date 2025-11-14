@@ -1,9 +1,10 @@
 "use client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 const useUpdateParams = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   const updateParams = async (key: string, value: string): Promise<void> => {
     // Create a promise that resolves once router.replace is done
@@ -14,7 +15,9 @@ const useUpdateParams = () => {
       } else {
         params.delete(key);
       }
-      router.replace(`?${params.toString()}`, { scroll: false });
+      // Use current pathname to maintain route context
+      const newPath = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      router.replace(newPath, { scroll: false });
       resolve();
     });
   };

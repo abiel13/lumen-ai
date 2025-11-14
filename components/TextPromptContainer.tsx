@@ -69,7 +69,7 @@ const TextPromptContainer = ({ userid }: { userid: string }) => {
       setLoading(true);
 
       addmessages({
-        content:text,
+        content: text,
         path: "sent",
       });
 
@@ -88,7 +88,7 @@ const TextPromptContainer = ({ userid }: { userid: string }) => {
       toast("An error occurred while sending the message");
       return;
     }
-    finally{
+    finally {
       setLoading(false)
     }
 
@@ -118,30 +118,47 @@ const TextPromptContainer = ({ userid }: { userid: string }) => {
     } finally {
       setText("");
       setLoading(false); // Reset loading state
-      await revalidateHome(); // Update the home page data
+      try {
+        await revalidateHome(); // Update the home page data
+      } catch (error) {
+        console.error("Error revalidating home:", error);
+      }
     }
   }
-  
+
   return (
-    <div className="w-[55%] mx-auto  flex flex-col gap-4 items-center justify-center py-3 bg-[#fafafa]  shadow-md rounded-lg px-2">
-      <div className="flex-row w-full items-center flex gap-4">
+    <div className="w-full max-w-4xl mx-auto flex flex-col gap-4 items-center justify-center py-4 px-4">
+      <div className="w-full flex-row items-center flex gap-3 bg-white rounded-2xl shadow-lg border border-gray-200 px-4 py-2">
         <Input
           value={text}
           onChange={(e: any) => setText(e.target.value)}
-          className="w-[100%] py-6"
-          placeholder="Write a prompt .."
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey && !loading) {
+              e.preventDefault();
+              messagePrompt();
+            }
+          }}
+          className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base py-6"
+          placeholder="Type your message here..."
+          disabled={loading}
         />
-        <div className="w-14 h-14 rounded-full flex items-center justify-center bg-slate-400">
+        <button
+          onClick={messagePrompt}
+          disabled={loading || !text.trim()}
+          className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           {loading ? (
-            <div></div>
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
           ) : (
-            <Plane onClick={messagePrompt} color="white" />
+            <Plane className="w-5 h-5" />
           )}
-        </div>
+        </button>
       </div>
 
-      <div className="px-6 py-2 rounded-3xl self-start bg-slate-400 text-white font-medium">
-        Generate Image
+      <div className="flex items-center gap-2 text-sm text-gray-500">
+        <span>Press Enter to send</span>
+        <span>•</span>
+        <span>Shift + Enter for new line</span>
       </div>
     </div>
   );

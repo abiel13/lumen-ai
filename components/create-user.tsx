@@ -12,19 +12,17 @@ const CreateUserComp = ({ user }: any) => {
     (async function () {
       try {
         const isuser = await getUserByClerkId(user);
-        console.log(isuser);
         if (isuser) {
-          router.push("/");
+          router.push("/chat");
           return;
         }
 
         const newuser = await createUser(user!);
         if (newuser) {
-          console.log(newuser);
-          router.push("/");
+          router.push("/chat");
         }
       } catch (error) {
-        console.log(error);
+        console.error("Error creating user:", error);
       } finally {
         setLoading(false);
       }
