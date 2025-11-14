@@ -110,7 +110,7 @@ const MessageBox = () => {
             How can I help you today?
           </h4>
           <p className="text-gray-500 text-lg">
-            Ask me anything, and I'll do my best to assist you.
+            Ask me anything, and I&apos;ll do my best to assist you.
           </p>
         </div>
       )}
